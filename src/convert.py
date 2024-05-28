@@ -1,6 +1,6 @@
 import os
 import shutil
-
+import numpy as np
 import supervisely as sly
 from supervisely.io.fs import (
     file_exists,
@@ -19,72 +19,102 @@ def convert_and_upload_supervisely_project(
 ) -> sly.ProjectInfo:
     # Possible structure for bbox case. Feel free to modify as you needs.
 
-    root_path = ""
-    images_folder = "images"
-    bboxes_folder = "labels"
+    images_path = "/home/alex/DATASETS/IMAGES/CLVOS23/JPEGImages"
+    masks_path = "/home/alex/DATASETS/IMAGES/CLVOS23/Annotations"
+
+    images_ext = ".jpg"
+    masks_ext = ".png"
+
     batch_size = 30
-    img_ext = ".png"
-    ann_ext = ".txt"
+    ds_name = "ds"
+
 
     def create_ann(image_path):
-        labels, img_tags, label_tags = [], [], []
+        labels = []
 
-        image_np = sly.imaging.image.read(image_path)[:, :, 0]
-        img_height = image_np.shape[0]
-        img_width = image_np.shape[1]
+        mask_path = image_path.replace("JPEGImages", "Annotations").replace(images_ext, masks_ext)
+        if file_exists(mask_path):
+            ann_np = sly.imaging.image.read(mask_path)[:, :, 0]
 
-        file_name = get_file_name(image_path)
-        curr_anns_dirpath = ""
-        ann_path = os.path.join(curr_anns_dirpath, file_name + ann_ext)
+            if len(np.unique(ann_np)) > 1:
+                obj_mask = ann_np == 128
+                curr_bitmap = sly.Bitmap(obj_mask)
+                curr_label = sly.Label(curr_bitmap, obj_class)
+                labels.append(curr_label)
 
-        if file_exists(ann_path):
-            with open(ann_path) as f:
-                content = f.read().split("\n")
-                for curr_data in content:
-                    if len(curr_data) != 0:
-                        curr_data = list(map(float, curr_data.split(" ")))
+        return sly.Annotation(img_size=(img_height, img_wight), labels=labels, img_tags=[tag])
 
-                        left = int((curr_data[1] - curr_data[3] / 2) * img_width)
-                        right = int((curr_data[1] + curr_data[3] / 2) * img_width)
-                        top = int((curr_data[2] - curr_data[4] / 2) * img_height)
-                        bottom = int((curr_data[2] + curr_data[4] / 2) * img_height)
 
-                        rectangle = sly.Rectangle(top=top, left=left, bottom=bottom, right=right)
+    person = sly.ObjClass("person", sly.Bitmap)
+    rat = sly.ObjClass("rat", sly.Bitmap)
+    car = sly.ObjClass("car", sly.Bitmap)
+    dog = sly.ObjClass("dog", sly.Bitmap)
+    dressage = sly.ObjClass("dressage", sly.Bitmap)
 
-                        for obj_class in obj_classes:
-                            if obj_class.name == idx2clsname[curr_data[0]]:
-                                curr_obj_class = obj_class
-                                break
-                        label = sly.Label(rectangle, curr_obj_class, label_tags)
-                        labels.append(label)
+    folder_to_class = {
+        "skiing": person,
+        "parkour_boy": person,
+        "rat": rat,
+        "car": car,
+        "dog": dog,
+        "skiing_slalom": person,
+        "blueboy": person,
+        "dressage": dressage,
+        "skating": person,
+    }
 
-        return sly.Annotation(img_size=(img_height, img_width), labels=labels, img_tags=img_tags)
+    video_name_meta = sly.TagMeta(
+        "video name",
+        sly.TagValueType.ONEOF_STRING,
+        possible_values=[
+            "skiing",
+            "parkour boy",
+            "rat",
+            "car",
+            "dog",
+            "skiing slalom",
+            "blueboy",
+            "dressage",
+            "skating",
+        ],
+    )
 
-    class_names = ["class1", "class2", ...]
-    idx2clsname = {}
-    obj_classes = [sly.ObjClass(name, sly.Rectangle) for name in class_names]
 
     project = api.project.create(workspace_id, project_name, change_name_if_conflict=True)
-    meta = sly.ProjectMeta(obj_classes=obj_classes)
+
+    meta = sly.ProjectMeta(obj_classes=[rat, car, dog, dressage, person], tag_metas=[video_name_meta])
     api.project.update_meta(project.id, meta.to_json())
 
-    for ds_name in os.listdir(root_path):
-        dataset = api.dataset.create(project.id, ds_name, change_name_if_conflict=True)
-        dataset_path = os.path.join(root_path, ds_name)
 
-        images_pathes = sly.fs.list_files_recursively(dataset_path, valid_extensions=[img_ext])
+    dataset = api.dataset.create(project.id, ds_name, change_name_if_conflict=True)
 
-        pbar = tqdm(desc=f"Create dataset '{ds_name}'", total=len(images_pathes))
-        for images_pathes_batch in sly.batched(images_pathes, batch_size=batch_size):
-            images_names_batch = [
-                get_file_name_with_ext(image_path) for image_path in images_pathes_batch
+    for subfolder in os.listdir(images_path):
+        obj_class = folder_to_class[subfolder]
+        tag_value = subfolder.replace("_", " ")
+        tag = sly.Tag(video_name_meta, value=tag_value)
+
+        curr_images_path = os.path.join(images_path, subfolder)
+
+        images_names = os.listdir(curr_images_path)
+
+        image_np = sly.imaging.image.read(os.path.join(curr_images_path, images_names[0]))[:, :, 0]
+        img_height = image_np.shape[0]
+        img_wight = image_np.shape[1]
+
+        progress = sly.Progress("Create dataset {}".format(ds_name), len(images_names))
+
+        for images_names_batch in sly.batched(images_names, batch_size=batch_size):
+            img_pathes_batch = [
+                os.path.join(curr_images_path, image_name) for image_name in images_names_batch
             ]
 
-            img_infos = api.image.upload_paths(dataset.id, images_names_batch, images_pathes_batch)
-            img_ids = [image.id for image in img_infos]
+            anns_batch = [create_ann(image_path) for image_path in img_pathes_batch]
 
-            anns = [create_ann(image_path) for image_path in images_pathes_batch]
-            api.annotation.upload_anns(img_ids, anns)
+            img_infos = api.image.upload_paths(dataset.id, images_names_batch, img_pathes_batch)
+            img_ids = [im_info.id for im_info in img_infos]
 
-            pbar.update(len(images_names_batch))
+            api.annotation.upload_anns(img_ids, anns_batch)
+
+            progress.iters_done_report(len(images_names_batch))
+
     return project
