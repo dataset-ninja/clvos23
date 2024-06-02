@@ -1,4 +1,4 @@
-The authors proposed the **CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** - new long-video object segmentation dataset for continual learning, as a realistic and significantly greater challenge for testing VOS(Video Object Segmentation) methods on long videos. The frames for dataset were taken from the [Long Videos dataset](https://www.kaggle.com/datasets/gvclsu/long-videos)(***rat***, **dressage*, ***blueboy*** videos) and from the YouTube (***car***, ***dog***, ***parkour***, ***skating***, ***skiing***, ***skiing-long*** videos).
+The authors proposed the **CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** - new long-video object segmentation dataset for continual learning, as a realistic and significantly greater challenge for testing VOS(Video Object Segmentation) methods on long videos. The frames for dataset were taken from the [Long Videos dataset](https://www.kaggle.com/datasets/gvclsu/long-videos)(***rat***, ***dressage***, ***blueboy*** videos) and from the YouTube (***car***, ***dog***, ***parkour***, ***skating***, ***skiing***, ***skiing-long*** videos).
 
 ## Motivation
 
