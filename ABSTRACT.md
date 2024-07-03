@@ -1,4 +1,4 @@
-The authors proposed the **CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** - new long-video object segmentation dataset for continual learning, as a realistic and significantly greater challenge for testing VOS(Video Object Segmentation) methods on long videos. The frames for dataset were taken from the [Long Videos dataset](https://www.kaggle.com/datasets/gvclsu/long-videos)(***rat***, ***dressage***, ***blueboy*** videos) and from the YouTube (***car***, ***dog***, ***parkour***, ***skating***, ***skiing***, ***skiing-long*** videos).
+The authors proposed the **CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** - new long-video object segmentation dataset for continual learning, as a realistic and significantly greater challenge for testing VOS(Video Object Segmentation) methods on long videos. The frames for dataset were taken from the [Long Videos dataset](https://www.kaggle.com/datasets/gvclsu/long-videos) (*rat*, *dressage*, *blueboy* videos) and from the YouTube (*car*, *dog*, *parkour*, *skating*, *skiing*, *skiing-long* videos).
 
 ## Motivation
 
@@ -18,8 +18,7 @@ The dataset consisted of three long sequences with a total of 7411 frames. The i
 
 <img src="https://github.com/dataset-ninja/clvos23/assets/120389559/901b7f3a-9e3c-45ec-ac9b-693f1c9fc664" alt="image" width="800">
 
-<span style="font-size: smaller; font-style: italic;">A subset of frames from “dressage” video of the Long Videos dataset. The video consists of 23 sub-chunks that are separated from each other by significant distributional drifts or discontinuities. The lower (sparse) row, in each set, show the annotated frames. The annotations provided by are shown without a border, whereas the annotated masks added via this paper, and made available via the
-CLVOS23 dataset, are shown with blue borders. The four sub-chunks that are missing from the Long Videos dataset are encircled in red.</span>
+<span style="font-size: smaller; font-style: italic;">A subset of frames from “dressage” video of the Long Videos dataset. The video consists of 23 sub-chunks that are separated from each other by significant distributional drifts or discontinuities. The lower (sparse) row, in each set, show the annotated frames. The annotations provided by are shown without a border, whereas the annotated masks added via this paper, and made available via the CLVOS23 dataset, are shown with blue borders. The four sub-chunks that are missing from the Long Videos dataset are encircled in red.</span>
 
 Image above shows 23 sub-chunks of videos in the “dressage” video of the Long Videos dataset. Each sub-chunk is separated from its previous and next sub-chunks based on the distribution drifts. When an online or offline event, such as a sports competition, is recorded using multiple cameras, these distribution drifts are common in mediaprovided videos. As a result, in the authors proposed dataset, they first utilize the following strategy to select candidate frames for annotation and evaluation.
 
