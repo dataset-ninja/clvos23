@@ -1,6 +1,6 @@
 Dataset **CLVOS23** can be downloaded in [Supervisely format](https://developer.supervisely.com/api-references/supervisely-annotation-json-format):
 
- [Download](https://assets.supervisely.com/supervisely-supervisely-assets-public/teams_storage/P/1/nh/yMZ9T0tEuMWkR23P1lBdyeAapvrNhvZgtfeeddPR1m4goZfHpFdcHMqeH8MUTjRaDfiDTytubrI6bNyqiHLslcOyGXBdcfHo0sbnFtv5JFJsWpldkQLPTYo2O5qP.tar)
+ [Download](/supervisely-supervisely-assets-public/teams_storage/H/j/nZ/qPEhOC9xpy0kPCnXn2aXX5lyQu0FjKOh9XoKntfU9Pb7JDJOh04InSODMkKpqPCxF2Z1il9ItSqiRHk8rWYrOOq9bf22CHTG3FMIYSFfVS8hNANiYXd8MAOh6lxL.tar)
 
 As an alternative, it can be downloaded with *dataset-tools* package:
 ``` bash
