@@ -1,4 +1,4 @@
-**CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** is a dataset for semantic segmentation and object detection tasks. It is applicable or relevant across various domains. 
+**CLVOS23: A Long Video Object Segmentation Dataset for Continual Learning** is a dataset for semantic segmentation, object detection, and semi supervised learning tasks. It is applicable or relevant across various domains. 
 
 The dataset consists of 13362 images with 284 labeled objects belonging to 5 different classes including *person*, *dressage*, *rat*, and other: *car* and *dog*.
 
